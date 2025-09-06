@@ -18,20 +18,30 @@ public class UserService
     @Autowired
     private final UserRepository userRepository;
 
-    public UserInfoDto createOrUpdateUser(UserInfoDto userInfoDto){
-        UnaryOperator<UserInfo> updatingUser = user -> {
-            return userRepository.save(userInfoDto.transformToUserInfo());
+    public UserInfoDto createOrUpdateUser(UserInfoDto userInfoDto) {
+        UnaryOperator<UserInfo> updatingUser = existingUser -> {
+            existingUser.setUsername(userInfoDto.getUsername());
+            existingUser.setFirstName(userInfoDto.getFirstName());
+            existingUser.setLastName(userInfoDto.getLastName());
+            existingUser.setPhoneNumber(userInfoDto.getPhoneNumber());
+            existingUser.setEmail(userInfoDto.getEmail());
+            existingUser.setProfilePic(userInfoDto.getProfilePic());
+            return userRepository.save(existingUser);
         };
 
         Supplier<UserInfo> createUser = () -> {
-             return userRepository.save(userInfoDto.transformToUserInfo());
+            UserInfo newUser = userInfoDto.transformToUserInfo();
+            return userRepository.save(newUser);
         };
 
         UserInfo userInfo = userRepository.findByUsername(userInfoDto.getUsername())
                 .map(updatingUser)
                 .orElseGet(createUser);
+
         return userInfoDto.transformToUserInfoDto(userInfo);
     }
+
+
 
     public UserInfoDto getUser(UserInfoDto userInfoDto) throws Exception{
         Optional<UserInfo> userInfoDtoOpt = userRepository.findByUsername(userInfoDto.getUsername());
