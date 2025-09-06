@@ -27,33 +27,26 @@ public class UserService
              return userRepository.save(userInfoDto.transformToUserInfo());
         };
 
-        UserInfo userInfo = userRepository.findByUserId(userInfoDto.getUserId())
+        UserInfo userInfo = userRepository.findByUsername(userInfoDto.getUsername())
                 .map(updatingUser)
                 .orElseGet(createUser);
-        return new UserInfoDto(
-                userInfo.getUserId(),
-                userInfo.getFirstName(),
-                userInfo.getLastName(),
-                userInfo.getPhoneNumber(),
-                userInfo.getEmail(),
-                userInfo.getProfilePic()
-        );
+        return userInfoDto.transformToUserInfoDto(userInfo);
     }
 
     public UserInfoDto getUser(UserInfoDto userInfoDto) throws Exception{
-        Optional<UserInfo> userInfoDtoOpt = userRepository.findByUserId(userInfoDto.getUserId());
+        Optional<UserInfo> userInfoDtoOpt = userRepository.findByUsername(userInfoDto.getUsername());
         if(userInfoDtoOpt.isEmpty()){
             throw new Exception("User not found");
         }
         UserInfo userInfo = userInfoDtoOpt.get();
-        return new UserInfoDto(
-                userInfo.getUserId(),
-                userInfo.getFirstName(),
-                userInfo.getLastName(),
-                userInfo.getPhoneNumber(),
-                userInfo.getEmail(),
-                userInfo.getProfilePic()
-        );
+        return UserInfoDto.builder()
+                .firstName(userInfo.getFirstName())
+                .lastName(userInfo.getLastName())
+                .email(userInfo.getEmail())
+                .phoneNumber(userInfo.getPhoneNumber())
+                .profilePic(userInfo.getProfilePic())
+                .username(userInfo.getUsername())
+                .build();
     }
 
 }

@@ -23,7 +23,7 @@ public class UserInfo {
 
     @NonNull
     @Column(unique = true, nullable = false)
-    private String userId;  // Business/user identifier
+    private String username;  // Business/user identifier
 
     @NonNull
     private String firstName;

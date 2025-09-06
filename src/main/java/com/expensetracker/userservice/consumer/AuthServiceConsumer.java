@@ -23,11 +23,11 @@ public class AuthServiceConsumer
     private ObjectMapper objectMapper;
 
     @KafkaListener(topics = "${spring.kafka.topic-json.name}", groupId = "${spring.kafka.consumer.group-id}")
-    public void listen(@Payload UserInfoDto eventData) {
+    public void listen(@Payload String eventData) {
         try{
-            // Todo: Make it transactional, to handle idempotency and validate email, phoneNumber etc
             log.info("AuthServiceConsumer: Received event from Kafka topic: {}", eventData);
-            userService.createOrUpdateUser(eventData);
+            UserInfoDto userInfoDto = objectMapper.readValue(eventData, UserInfoDto.class);
+            userService.createOrUpdateUser(userInfoDto);
         }catch(Exception ex){
             ex.printStackTrace();
             System.out.println("AuthServiceConsumer: Exception is thrown while consuming kafka event");

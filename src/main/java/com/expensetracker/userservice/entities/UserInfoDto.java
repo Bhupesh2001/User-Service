@@ -1,40 +1,36 @@
 package com.expensetracker.userservice.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+import java.util.HashSet;
+import java.util.Set;
+
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Builder
+@Data
 public class UserInfoDto
 {
 
-    @NonNull
-    private String userId;
+    private String firstName; // first_name
 
-    @NonNull
-    private String firstName;
+    private String lastName; //last_name
 
-    @NonNull
-    private String lastName;
-
-    @NonNull
     private Long phoneNumber;
 
-    @NonNull
-    private String email;
+    private String email; // email
 
-    private String profilePic;
+    private String profilePic; // profile_pic
+
+    private String username;
+
+    private String password;
+
+    private Set<UserRole> roles = new HashSet<>();
 
     public UserInfo transformToUserInfo() {
         return UserInfo.builder()
-                .userId(userId)
+                .username(username)
                 .firstName(firstName)
                 .lastName(lastName)
                 .phoneNumber(phoneNumber)
@@ -43,4 +39,14 @@ public class UserInfoDto
                 .build();
     }
 
+    public UserInfoDto transformToUserInfoDto(UserInfo userInfo) {
+        return UserInfoDto.builder()
+                .firstName(userInfo.getFirstName())
+                .lastName(userInfo.getLastName())
+                .email(userInfo.getEmail())
+                .phoneNumber(userInfo.getPhoneNumber())
+                .profilePic(userInfo.getProfilePic())
+                .username(userInfo.getUsername())
+                .build();
+    }
 }
