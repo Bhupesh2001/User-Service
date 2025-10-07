@@ -4,6 +4,7 @@ package com.expensetracker.userservice.consumer;
 import com.expensetracker.userservice.entities.UserInfoDto;
 import com.expensetracker.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class UserController
 {
 
@@ -28,7 +30,9 @@ public class UserController
     }
 
     @PostMapping("/user/v1/createUpdate")
-    public ResponseEntity<UserInfoDto> createUpdateUser(@RequestBody UserInfoDto userInfoDto){
+    public ResponseEntity<UserInfoDto> createUpdateUser(@RequestBody UserInfoDto userInfoDto,
+                                                        @RequestHeader("X-User-ID") String userId) {
+        log.info("User ID: {}", userId);
         try{
             UserInfoDto user = userService.createOrUpdateUser(userInfoDto);
             return new ResponseEntity<>(user, HttpStatus.OK);
